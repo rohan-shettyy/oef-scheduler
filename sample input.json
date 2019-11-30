@@ -1,0 +1,75 @@
+{
+  "minDate": 1575590400000,
+  "maxDate": 1576540800000, 
+  "teams": [ 
+    {
+      "ulid": "01DT2QRH8GJ04PW98BTSW9NTXG",
+      "name": "Naus Gaming", 
+      "availability": [
+        {
+          "startDate": 1575676800000 
+        },
+        {
+          "startDate": 1575678600000
+        },
+        {
+          "startDate": 1575680400000
+        },
+        {
+          "startDate": 1575694800000
+        },
+        {
+          "startDate": 1576998900000
+        }
+      ]
+    },
+    {
+      "ulid": "01DSR5XDCABWKVZXS1FGD8VJ2W",
+      "name": "The Homies",
+      "availability": [
+        {
+          "startDate": 1575678600000
+        },
+        {
+          "startDate": 1575680400000
+        }
+      ]
+    },
+    {
+      "ulid": "01IUHIUFDSHFDS7YDFDUDUHDFU",
+      "name": "The Broskis",
+      "availability": [
+        {
+          "startDate": 1575678600000
+        },
+        {
+          "startDate": 1575680400000
+        },
+                {
+          "startDate": 1575672100000
+        }
+      ]
+    },
+    {
+      "ulid": "68HJBIHBIB7GFLSDFKFDNK",
+      "name": "Chiggas.co",
+      "availability": [
+        {
+          "startDate": 1575678600000
+        },
+        {
+          "startDate": 1575680500000
+        },
+        {
+          "startDate": 1575672100000
+        }
+      ]
+    }
+  ],
+  "matchesRequired": [
+    {
+      "teamA": "01DT2QRH8GJ04PW98BTSW9NTXG",
+      "teamB": "01DSR5XDCABWKVZXS1FGD8VJ2W"
+    }
+  ]
+}

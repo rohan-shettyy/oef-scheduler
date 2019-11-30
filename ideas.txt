@@ -1,0 +1,9 @@
+For each match in the queue:
+	Determine which available times the two teams have in common
+	For common available times (if any):
+		Check through all teams' availability to determine how many other teams have the same available time slot
+		**Schedule match for time with lowest common preferences**
+
+	If no common available times:
+		Compare first team's availability with other teams (prioritizes lower availability)
+		**Schedule match for time with lowest common preferences**

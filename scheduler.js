@@ -165,13 +165,13 @@ class Scheduler {
 					potentialTime = Math.round((Math.floor(Math.random() * ((this.ends - 3600000) - this.begins + 1) + this.begins)) / 1800000) * 1800000;
 					var l = 0;
 					this.teams[match[0]].scheduledTimes.forEach( (time) => {
-						console.log(time)
+						
 						if ((time - 5400000) < potentialTime && potentialTime < (time + 5400000)) {
 							l++;
 						}
 					});
 					this.teams[match[1]].scheduledTimes.forEach( (time) => {
-						console.log(time)
+					
 						if ((time - 5400000) < potentialTime && potentialTime < (time + 5400000)) {
 							l++;
 						}
@@ -219,7 +219,6 @@ class Scheduler {
 					tempAvs.push(a.startDate);
 				});
 				if (tempAvs.includes(scheduledTime)) {
-					console.log('f')
 					var ti = tempAvs.indexOf(scheduledTime);
 					if (typeof team.availability[ti + 2] !== "undefined")
 						if (team.availability[ti].startDate + 3600000 == team.availability[ti + 2].startDate)

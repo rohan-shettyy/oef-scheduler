@@ -116,6 +116,7 @@ class Scheduler {
 				});
 			});
 
+			
 			// If no common times, pick one from team A
 			if (commonTimes.length == 0) {
 				this.teams[match[0]].availability.forEach( (pt) => {
@@ -186,10 +187,10 @@ class Scheduler {
 			commonTimes.forEach( (time) => {
 				var c = 0;
 				for (var t = 0; t < this.teams.length; t++) {
-					var team = this.teams[t];
-					if (team == this.teams[match[0]] || team == this.teams[match[1]])
+					var teamt = this.teams[t];
+					if (teamt == this.teams[match[0]] || teamt == this.teams[match[1]])
 						continue;
-					team.availability.forEach( (slot) => {
+					teamt.availability.forEach( (slot) => {
 						if (slot.startDate == time)
 							c++;
 					});
@@ -197,7 +198,7 @@ class Scheduler {
 				sharedAll.push(c);
 			});	
 
-			var scheduledTime = commonTimes[sharedAll.indexOf(Math.min(...sharedAll))];
+			var scheduledTime = commonTimes[sharedAll.indexOf(Math.min.apply(null, sharedAll),)];
 			// Schedules the match for the time with the lowest shared preferences among teams
 			this.finalMatches.matches.push(
 				{
@@ -212,6 +213,23 @@ class Scheduler {
 
 
 			// If 2 consecutive chunks are available after, remove them because matches are an hour long and need 30 min spacing.
+			this.teams.forEach( (team) => {
+				var tempAvs = []
+				team.availability.forEach( (a) => {
+					tempAvs.push(a.startDate);
+				});
+				if (tempAvs.includes(scheduledTime)) {
+					console.log('f')
+					var ti = tempAvs.indexOf(scheduledTime);
+					if (typeof team.availability[ti + 2] !== "undefined")
+						if (team.availability[ti].startDate + 3600000 == team.availability[ti + 2].startDate)
+							team.availability.splice(ti + 2,1);
+					if (typeof team.availability[ti + 1] !== "undefined")
+						if (team.availability[ti].startDate + 1800000 == team.availability[ti + 1].startDate)
+							team.availability.splice(ti + 1,1);
+					team.availability.splice(ti,1);
+				}
+			});
 
 			if (typeof this.teams[match[0]].availability[timeIndex[0] + 2] !== "undefined")
 				if (this.teams[match[0]].availability[timeIndex[0]].startDate + 3600000 == this.teams[match[0]].availability[timeIndex[0] + 2].startDate)
@@ -221,9 +239,9 @@ class Scheduler {
 					this.teams[match[0]].availability.splice(timeIndex[0] + 1,1);
 			this.teams[match[0]].availability.splice(timeIndex[0],1);
 			
-			if (typeof this.teams[match[0]].availability[timeIndex[0] + 2] !== "undefined")
-				if (this.teams[match[0]].availability[timeIndex[0]].startDate + 3600000 == this.teams[match[0]].availability[timeIndex[0] + 2].startDate)
-					this.teams[match[0]].availability.splice(timeIndex[0] + 2,1);
+			if (typeof this.teams[match[1]].availability[timeIndex[1] + 2] !== "undefined")
+				if (this.teams[match[1]].availability[timeIndex[1]].startDate + 3600000 == this.teams[match[1]].availability[timeIndex[1] + 2].startDate)
+					this.teams[match[1]].availability.splice(timeIndex[1] + 2,1);
 			if (typeof this.teams[match[1]].availability[timeIndex[1] + 1] !== "undefined")
 				if (this.teams[match[1]].availability[timeIndex[1]].startDate + 1800000 == this.teams[match[1]].availability[timeIndex[1] + 1].startDate)
 					this.teams[match[1]].availability.splice(timeIndex[1] + 1,1);

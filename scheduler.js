@@ -122,17 +122,18 @@ class Scheduler {
 				this.teams[match[0]].availability.forEach( (pt) => {
 					var p = 0;
 					this.teams[match[0]].scheduledTimes.forEach( (time) => {
-							if ((time - 5400000) < pt.startDate && pt.startDate < (time + 5400000)) {
+							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
 								p++;
 							}
 					});
 					this.teams[match[1]].scheduledTimes.forEach( (time) => {
-							if ((time - 5400000) < pt.startDate && pt.startDate < (time + 5400000)) {
+							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
 								p++;
 							}
 					});
 					if (p == 0) {
 						commonTimes.push(pt.startDate);
+						console.log("adding", pt.startDate, "to list")
 					}
 				});
 			}
@@ -142,12 +143,12 @@ class Scheduler {
 				this.teams[match[1]].availability.forEach( (pt) => {
 					var p = 0;
 					this.teams[match[0]].scheduledTimes.forEach( (time) => {
-							if ((time - 5400000) < pt.startDate && pt.startDate < (time + 5400000)) {
+							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
 								p++;
 							}
 					});
 					this.teams[match[1]].scheduledTimes.forEach( (time) => {
-							if ((time - 5400000) < pt.startDate && pt.startDate < (time + 5400000)) {
+							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
 								p++;
 							}
 					});
@@ -212,7 +213,7 @@ class Scheduler {
 			this.teams[match[1]].scheduledTimes.push(scheduledTime);
 
 
-			// If 2 consecutive chunks are available after, remove them because matches are an hour long and need 30 min spacing.
+			// Remove the scheduled time from all team's availability as that time can no longer be used. Also remove any time that is up to 1 hour ahead.
 			this.teams.forEach( (team) => {
 				var tempAvs = []
 				team.availability.forEach( (a) => {
@@ -225,24 +226,6 @@ class Scheduler {
 					team.availability.splice(tempAvs.indexOf(scheduledTime + 3600000));
 				}
 			});
-
-			if (typeof this.teams[match[0]].availability[timeIndex[0] + 2] !== "undefined")
-				if (this.teams[match[0]].availability[timeIndex[0]].startDate + 3600000 == this.teams[match[0]].availability[timeIndex[0] + 2].startDate)
-					this.teams[match[0]].availability.splice(timeIndex[0] + 2,1);
-			if (typeof this.teams[match[0]].availability[timeIndex[0] + 1] !== "undefined")
-				if (this.teams[match[0]].availability[timeIndex[0]].startDate + 1800000 == this.teams[match[0]].availability[timeIndex[0] + 1].startDate)
-					this.teams[match[0]].availability.splice(timeIndex[0] + 1,1);
-			this.teams[match[0]].availability.splice(timeIndex[0],1);
-			
-			if (typeof this.teams[match[1]].availability[timeIndex[1] + 2] !== "undefined")
-				if (this.teams[match[1]].availability[timeIndex[1]].startDate + 3600000 == this.teams[match[1]].availability[timeIndex[1] + 2].startDate)
-					this.teams[match[1]].availability.splice(timeIndex[1] + 2,1);
-			if (typeof this.teams[match[1]].availability[timeIndex[1] + 1] !== "undefined")
-				if (this.teams[match[1]].availability[timeIndex[1]].startDate + 1800000 == this.teams[match[1]].availability[timeIndex[1] + 1].startDate)
-					this.teams[match[1]].availability.splice(timeIndex[1] + 1,1);
-			this.teams[match[1]].availability.splice(timeIndex[1],1);
-		});
-		// Sorry about my spaghetti code
 
 		return this.finalMatches;
 	}

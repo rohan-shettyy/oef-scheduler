@@ -228,7 +228,7 @@ class Scheduler {
 			});
 
 		return this.finalMatches;
-	}
+	});
 }
 
 module.exports = Scheduler;

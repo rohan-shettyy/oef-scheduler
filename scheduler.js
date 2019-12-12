@@ -133,7 +133,6 @@ class Scheduler {
 					});
 					if (p == 0) {
 						commonTimes.push(pt.startDate);
-						console.log("adding", pt.startDate, "to list")
 					}
 				});
 			}
@@ -166,13 +165,11 @@ class Scheduler {
 					potentialTime = Math.round((Math.floor(Math.random() * ((this.ends - 3600000) - this.begins + 1) + this.begins)) / 1800000) * 1800000;
 					var l = 0;
 					this.teams[match[0]].scheduledTimes.forEach( (time) => {
-						console.log(time)
 						if ((time - 5400000) < potentialTime && potentialTime < (time + 5400000)) {
 							l++;
 						}
 					});
 					this.teams[match[1]].scheduledTimes.forEach( (time) => {
-						console.log(time)
 						if ((time - 5400000) < potentialTime && potentialTime < (time + 5400000)) {
 							l++;
 						}
@@ -221,9 +218,9 @@ class Scheduler {
 				});
 				if (tempAvs.includes(scheduledTime)) {
 					
-					team.availability.splice(tempAvs.indexOf(scheduledTime));
-					team.availability.splice(tempAvs.indexOf(scheduledTime + 1800000));
-					team.availability.splice(tempAvs.indexOf(scheduledTime + 3600000));
+					team.availability.splice(tempAvs.indexOf(scheduledTime), 1);
+					team.availability.splice(tempAvs.indexOf(scheduledTime + 1800000), 1);
+					team.availability.splice(tempAvs.indexOf(scheduledTime + 3600000), 1);
 				}
 			});
 

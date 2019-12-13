@@ -96,22 +96,17 @@ class Scheduler {
 				this.teams[match[1]].availability.forEach( (timeB) => {
 					if (timeA.startDate == timeB.startDate) {
 						var p = 0;
-						this.teams[match[0]].scheduledTimes.forEach( (time) => {
-							// This is a common chunk of code. It checks to see if the potential scheduled time is within 1.5 hours of any other scheduled match. If it is, a different time will be selected.
-							if ((time - 5400000) < timeA.startDate && timeA.startDate < (time + 5400000)) {
+
+						this.finalMatches.matches.forEach( (time) => {
+							if ((timeA.startDate - 5400000) < time.startDate && time.startDate < (timeA.startDate + 5400000)) {
 								p++;
 							}
 						});
-						this.teams[match[1]].scheduledTimes.forEach( (time) => {
-							if ((time - 5400000) < timeA.startDate && timeA.startDate < (time + 5400000)) {
-								p++;
-							}
-						});
-						if (p == 0){
-							commonTimes.push(timeA.startDate);
-							timeIndex.push(this.teams[match[0]].availability.indexOf(timeA));
-							timeIndex.push(this.teams[match[1]].availability.indexOf(timeB));
-						}
+					}
+					if (p == 0){
+						commonTimes.push(timeA.startDate);
+						timeIndex.push(this.teams[match[0]].availability.indexOf(timeA));
+						timeIndex.push(this.teams[match[1]].availability.indexOf(timeB));
 					}
 				});
 			});
@@ -121,13 +116,8 @@ class Scheduler {
 			if (commonTimes.length == 0) {
 				this.teams[match[0]].availability.forEach( (pt) => {
 					var p = 0;
-					this.teams[match[0]].scheduledTimes.forEach( (time) => {
-							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
-								p++;
-							}
-					});
-					this.teams[match[1]].scheduledTimes.forEach( (time) => {
-							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
+					this.finalMatches.matches.forEach( (time) => {
+							if ((pt.startDate - 5400000) < time.startDate && time.startDate < (pt.startDate + 5400000)) {
 								p++;
 							}
 					});
@@ -141,13 +131,8 @@ class Scheduler {
 			if (commonTimes.length == 0) {
 				this.teams[match[1]].availability.forEach( (pt) => {
 					var p = 0;
-					this.teams[match[0]].scheduledTimes.forEach( (time) => {
-							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
-								p++;
-							}
-					});
-					this.teams[match[1]].scheduledTimes.forEach( (time) => {
-							if ((pt.startDate - 5400000) < time && time < (pt.startDate + 5400000)) {
+					this.finalMatches.matches.forEach( (time) => {
+							if ((pt.startDate - 5400000) < time.startDate && time.startDate < (pt.startDate + 5400000)) {
 								p++;
 							}
 					});
@@ -164,13 +149,8 @@ class Scheduler {
 				while (!timeWorks) {
 					potentialTime = Math.round((Math.floor(Math.random() * ((this.ends - 3600000) - this.begins + 1) + this.begins)) / 1800000) * 1800000;
 					var l = 0;
-					this.teams[match[0]].scheduledTimes.forEach( (time) => {
-						if ((time - 5400000) < potentialTime && potentialTime < (time + 5400000)) {
-							l++;
-						}
-					});
-					this.teams[match[1]].scheduledTimes.forEach( (time) => {
-						if ((time - 5400000) < potentialTime && potentialTime < (time + 5400000)) {
+					this.finalMatches.matches.forEach( (time) => {
+						if ((time.startDate - 5400000) < potentialTime && potentialTime < (time.startDate + 5400000)) {
 							l++;
 						}
 					});

@@ -7,7 +7,7 @@ class Scheduler {
 
 		this.teams = req.teams;
 		this.matchups = req.matchesRequired;
-		this.finalMatches = {matches:[]}
+		this.finalMatches = {matches:[], unscheduled:[]}
 	}
 
 	getRanges() {
@@ -142,68 +142,57 @@ class Scheduler {
 				});
 			}
 
-			// If team B has no remaining availability, pick random between start and end date of tournament
-			var potentialTime;
-			var timeWorks = false;
 			if (commonTimes.length == 0) {
-				while (!timeWorks) {
-					potentialTime = Math.round((Math.floor(Math.random() * ((this.ends - 3600000) - this.begins + 1) + this.begins)) / 1800000) * 1800000;
-					var l = 0;
-					this.finalMatches.matches.forEach( (time) => {
-						if ((time.startDate - 5400000) < potentialTime && potentialTime < (time.startDate + 5400000)) {
-							l++;
-						}
-					});
-					if (l == 0)
-						timeWorks = true;
-				}
-				commonTimes.push(potentialTime);
-			}
-
-			// For each common time, finds common times with every other team.
-			var sharedAll = []
-			commonTimes.forEach( (time) => {
-				var c = 0;
-				for (var t = 0; t < this.teams.length; t++) {
-					var teamt = this.teams[t];
-					if (teamt == this.teams[match[0]] || teamt == this.teams[match[1]])
-						continue;
-					teamt.availability.forEach( (slot) => {
-						if (slot.startDate == time)
-							c++;
-					});
-				};
-				sharedAll.push(c);
-			});	
-
-			var scheduledTime = commonTimes[sharedAll.indexOf(Math.min.apply(null, sharedAll),)];
-			// Schedules the match for the time with the lowest shared preferences among teams
-			this.finalMatches.matches.push(
-				{
+				this.finalMatches.unscheduled.push({
 					teamA: this.teams[match[0]].ulid,
-					teamB: this.teams[match[1]].ulid,
-					startDate: scheduledTime
-				}
-			);
-
-			this.teams[match[0]].scheduledTimes.push(scheduledTime);
-			this.teams[match[1]].scheduledTimes.push(scheduledTime);
-
-
-			// Remove the scheduled time from all team's availability as that time can no longer be used. Also remove any time that is up to 1 hour ahead.
-			this.teams.forEach( (team) => {
-				var tempAvs = []
-				team.availability.forEach( (a) => {
-					tempAvs.push(a.startDate);
+					teamB: this.teams[match[1]].ulid
 				});
-				if (tempAvs.includes(scheduledTime)) {
-					
-					team.availability.splice(tempAvs.indexOf(scheduledTime), 1);
-					team.availability.splice(tempAvs.indexOf(scheduledTime + 1800000), 1);
-					team.availability.splice(tempAvs.indexOf(scheduledTime + 3600000), 1);
-				}
-			});
+			} else {
 
+				// For each common time, finds common times with every other team.
+				var sharedAll = []
+				commonTimes.forEach( (time) => {
+					var c = 0;
+					for (var t = 0; t < this.teams.length; t++) {
+						var teamt = this.teams[t];
+						if (teamt == this.teams[match[0]] || teamt == this.teams[match[1]])
+							continue;
+						teamt.availability.forEach( (slot) => {
+							if (slot.startDate == time)
+								c++;
+						});
+					};
+					sharedAll.push(c);
+				});	
+
+				var scheduledTime = commonTimes[sharedAll.indexOf(Math.min.apply(null, sharedAll),)];
+				// Schedules the match for the time with the lowest shared preferences among teams
+				this.finalMatches.matches.push(
+					{
+						teamA: this.teams[match[0]].ulid,
+						teamB: this.teams[match[1]].ulid,
+						startDate: scheduledTime
+					}
+				);
+
+				this.teams[match[0]].scheduledTimes.push(scheduledTime);
+				this.teams[match[1]].scheduledTimes.push(scheduledTime);
+
+
+				// Remove the scheduled time from all team's availability as that time can no longer be used. Also remove any time that is up to 1 hour ahead.
+				this.teams.forEach( (team) => {
+					var tempAvs = []
+					team.availability.forEach( (a) => {
+						tempAvs.push(a.startDate);
+					});
+					if (tempAvs.includes(scheduledTime)) {
+						
+						team.availability.splice(tempAvs.indexOf(scheduledTime), 1);
+						team.availability.splice(tempAvs.indexOf(scheduledTime + 1800000), 1);
+						team.availability.splice(tempAvs.indexOf(scheduledTime + 3600000), 1);
+					}
+				});
+			}
 		});
 		return this.finalMatches;
 	}

@@ -7,7 +7,7 @@ class Scheduler {
 
 		this.teams = req.teams;
 		this.matchups = req.matchesRequired;
-		this.finalMatches = {matches:[], unscheduled:[]}
+		this.finalMatches = {matches:[], unscheduled:[], partiallyScheduled:[]}
 	}
 
 	getRanges() {
@@ -92,6 +92,7 @@ class Scheduler {
 			// Finds all common times between the two participating teams
 			var commonTimes = [];
 			var timeIndex = [];
+
 			this.teams[match[0]].availability.forEach( (timeA) => {
 				this.teams[match[1]].availability.forEach( (timeB) => {
 					if (timeA.startDate == timeB.startDate) {
@@ -178,6 +179,22 @@ class Scheduler {
 				this.teams[match[0]].scheduledTimes.push(scheduledTime);
 				this.teams[match[1]].scheduledTimes.push(scheduledTime);
 
+				if (this.teams[match[0]].availability.includes({startDate: scheduledTime}) && !this.teams[match[1]].availability.includes({startDate:scheduledTime})) {
+					this.finalMatches.partiallyScheduled.push(
+						{
+						teamA: this.teams[match[0]].ulid,
+						teamB: this.teams[match[1]].ulid,
+						startDate: scheduledTime
+					}
+					);
+				} else if (this.teams[match[1]].availability.includes({startDate: scheduledTime}) && !this.teams[match[0]].availability.includes({startDate: scheduledTime})) {
+					this.finalMatches.partiallyScheduled.push(
+						{
+						teamA: this.teams[match[0]].ulid,
+						teamB: this.teams[match[1]].ulid,
+						startDate: scheduledTime
+					});
+				}
 
 				// Remove the scheduled time from all team's availability as that time can no longer be used. Also remove any time that is up to 1 hour ahead.
 				this.teams.forEach( (team) => {
@@ -186,7 +203,6 @@ class Scheduler {
 						tempAvs.push(a.startDate);
 					});
 					if (tempAvs.includes(scheduledTime)) {
-						
 						team.availability.splice(tempAvs.indexOf(scheduledTime), 1);
 						team.availability.splice(tempAvs.indexOf(scheduledTime + 1800000), 1);
 						team.availability.splice(tempAvs.indexOf(scheduledTime + 3600000), 1);
